@@ -1,28 +1,117 @@
 'use client';
 
-import { useState, useEffect, useMemo, ReactNode, useRef } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
 import Spline from '@splinetool/react-spline';
 import Image from 'next/image';
 import {
   IconVideo,
   IconBuilding,
   IconDeviceDesktop,
-  IconHeart,
   IconAugmentedReality,
 } from "@tabler/icons-react";
 import ScrollExpandMedia from '@/components/blocks/scroll-expansion-hero';
-import LaserFlow from '@/components/LaserFlow';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import ScrollStack, { ScrollStackItem } from '@/components/ScrollStack';
 import PillNav from '@/components/PillNav';
 import CurvedLoop from '@/components/CurvedLoop';
-import Balatro from '@/components/Balatro';
-import { CustomButton } from "@/components/ui/custom-button";
+
+const featuredProjects = [
+  {
+    title: 'Shill and Chill Club',
+    description:
+      'A cryptocurrency community platform where the "Chilluminati" earn rewards by sharing the next breakout Web3 project.',
+    logo: '/logos/shillandchill.webp',
+    href: 'https://shillandchill.club',
+  },
+  {
+    title: 'Earthy.tech',
+    description:
+      'A carbon-negative blockchain and AI ecosystem that brings radically transparent impact auditing to global philanthropy.',
+    logo: '/logos/earthy.svg',
+    href: 'https://earthy.tech',
+  },
+  {
+    title: 'Infinity Ængines',
+    description:
+      'A phygital innovation festival streaming simultaneously from TODA Dubai and its metaverse twin to 250K+ viewers.',
+    logo: '/logos/IAELOGO.avif',
+    href: 'https://infinityaengines.com',
+  },
+];
+
+const coreServices: Array<{
+  key: string;
+  title: string;
+  description: ReactNode;
+  icon: typeof IconVideo;
+}> = [
+  {
+    key: 'production-marketing',
+    title: 'Event Production & Marketing',
+    description: (
+      <>
+        <p>
+          End-to-end showcraft for venture forums, investor dinners, and flagship showcases—backed by the content, branding, and partnerships that keep momentum alive long after the lights go down.
+        </p>
+        <p className="text-[#59326f]">
+          Stage direction, sponsor strategy, paid media, and cinematic storytelling converge in one integrated production + growth engine.
+        </p>
+      </>
+    ),
+    icon: IconVideo,
+  },
+  {
+    key: 'hospitality',
+    title: 'Hospitality & Retreats',
+    description: (
+      <>
+        <p>
+          Founder villas, executive immersions, and wellness-led acceleration programs crafted in world-class destinations.
+        </p>
+        <p className="text-[#59326f]">
+          We curate the cohort, host investor circles, capture content daily, and guide founders into post-retreat deal flow and momentum.
+        </p>
+      </>
+    ),
+    icon: IconBuilding,
+  },
+];
+
+const phygitalService = {
+  title: 'Phygital & Metaverse Event Tech',
+  icon: IconAugmentedReality,
+  description: (
+    <>
+      <p>
+        Phygital venues, metaverse twins, and broadcast-grade media formats that turn every event into an always-on storytelling platform.
+      </p>
+      <p className="text-[#59326f]">
+        We architect interactive livestreams, cinematic recap series, and digital collectibles that extend your reach from the room to the globe.
+      </p>
+    </>
+  ),
+};
+
+const softwareService = {
+  title: 'Software Development & Venture Studio',
+  icon: IconDeviceDesktop,
+  description: (
+    <>
+      <p>
+        Full-stack product squads shipping Web2 and Web3 platforms, enterprise integrations, smart contracts, and immersive digital twins.
+      </p>
+      <p className="text-[#59326f]">
+        From discovery sprints to go-live operations, we co-build with founders and brands, then activate adoption through aligned community ecosystems.
+      </p>
+    </>
+  ),
+};
 
 export default function Home() {
+  const PhygitalIcon = phygitalService.icon;
+  const SoftwareIcon = softwareService.icon;
 
   return (
     <>
@@ -44,7 +133,7 @@ export default function Home() {
                   { label: 'About', href: '#about' },
                   { label: 'Our Events', href: '#our-events' },
                   { label: 'Services', href: '#services' },
-                  { label: 'Our Projects', href: '#projects' },
+                  { label: 'Our Projects', href: '#service-projects' },
                   { label: 'Partnerships', href: '#partnerships' },
                   { label: 'Contact', href: '#contact' },
                 ]}
@@ -96,7 +185,7 @@ export default function Home() {
         mediaSrc="https://player.vimeo.com/video/1118965725"
         bgImageSrc="/vidbgs/angelsvilla.png"
         title="Angels Villa"
-        date="2023"
+        date="2024"
         scrollToExpand="Scroll to Explore"
       >
         <EventContent
@@ -125,7 +214,7 @@ export default function Home() {
         mediaSrc="https://player.vimeo.com/video/1118966561"
         bgImageSrc="/vidbgs/infinityaengines.jpeg"
         title="Infinity Aengines"
-        date="2024"
+        date="2025"
         scrollToExpand="Scroll to Explore"
       >
         <EventContent
@@ -151,7 +240,7 @@ export default function Home() {
         mediaSrc="https://player.vimeo.com/video/1118967820"
         bgImageSrc="/vidbgs/startuppitch.png"
         title="Elevator Pitch Battle"
-        date="2024"
+        date="2025"
         scrollToExpand="Scroll to Explore"
       >
         <EventContent
@@ -171,118 +260,130 @@ export default function Home() {
       </div>
 
       {/* Services */}
-      <section id="services" className="py-16" style={{ minHeight: '100vh' }}>
-        <div className="text-center mb-24">
-          <h2 className="text-6xl md:text-8xl lg:text-9xl font-bold text-white relative inline-block">
-            <span
-              className="absolute inset-0 blur-2xl opacity-50"
-              style={{
-                background: 'linear-gradient(45deg, #3C1642, #401344, #FFFFFF)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}
-            >
+      <section id="services" className="py-16">
+        <div className="container mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl md:text-7xl lg:text-8xl font-bold text-[#311143]">
               OUR SERVICES
-            </span>
-            <span
-              className="relative"
-              style={{
-                background: 'linear-gradient(45deg, #3C1642, #401344, #FFFFFF)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text'
-              }}
-            >
-              OUR SERVICES
-            </span>
-          </h2>
-        </div>
-        <div className="relative w-full" style={{ minHeight: '150vh' }}>
-          <div className="absolute inset-0 w-full h-full">
-            <Balatro
-              color1="#3C1642"
-              color2="#FFFFFF"
-              color3="#401344"
-              contrast={2.5}
-              lighting={0.3}
-              spinSpeed={3.0}
-              isRotate={true}
-              mouseInteraction={true}
-            />
+            </h2>
           </div>
-          <div className="relative z-10">
-            <ScrollStack useWindowScroll={true}>
-              <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
-                  <div className="flex justify-center items-center md:order-1">
-                    <IconVideo className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
-                  </div>
-                  <div className="text-black text-center md:order-2">
-                    <h3 className="text-2xl md:text-3xl font-bold text-black mb-4">Event Production</h3>
-                    <p className="text-black/80 text-base md:text-lg leading-relaxed">
-                      Startup battles, forums, investor dinners with professional execution and global reach.
-                    </p>
-                  </div>
-                </div>
-              </ScrollStackItem>
 
-              <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
-                  <div className="text-black text-center">
-                    <h3 className="text-2xl md:text-3xl font-bold text-black mb-4">Event Marketing</h3>
-                    <p className="text-black/80 text-base md:text-lg leading-relaxed">
-                      Strategic marketing campaigns, brand partnerships, and digital amplification for maximum event impact.
-                    </p>
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <IconHeart className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
-                  </div>
+          <div className="grid gap-10 md:grid-cols-2">
+            {coreServices.map(({ key, title, description, icon: Icon }) => (
+              <div
+                key={key}
+                className="flex flex-col items-center gap-6 rounded-3xl bg-white text-center shadow-[0_18px_45px_rgba(64,19,68,0.12)] border border-[#f0e6f6] p-8 md:p-10"
+              >
+                <div className="rounded-2xl bg-[#f5ecff] p-4">
+                  <Icon className="w-16 h-16 text-[#401344]" />
                 </div>
-              </ScrollStackItem>
+                <h3 className="text-2xl md:text-3xl font-semibold text-[#311143]">
+                  {title}
+                </h3>
+                <div className="text-base md:text-lg leading-relaxed text-[#4a2a5d] max-w-[28rem] space-y-4">
+                  {description}
+                </div>
+              </div>
+            ))}
+          </div>
 
-              <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
-                  <div className="flex justify-center items-center md:order-1">
-                    <IconBuilding className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
-                  </div>
-                  <div className="text-black text-center md:order-2">
-                    <h3 className="text-2xl md:text-3xl font-bold text-black mb-4">Hospitality & Retreats</h3>
-                    <p className="text-black/80 text-base md:text-lg leading-relaxed">
-                      Founder camps, villa retreats, lifestyle programs in premium locations worldwide.
-                    </p>
-                  </div>
+          <div className="mt-10 flex flex-col gap-6 rounded-3xl bg-white shadow-[0_18px_45px_rgba(64,19,68,0.12)] border border-[#f0e6f6] p-8 md:p-12">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+              <div className="shrink-0 rounded-2xl bg-[#f5ecff] p-4 w-fit">
+                <PhygitalIcon className="w-16 h-16 text-[#401344]" />
+              </div>
+              <div className="space-y-4 text-left text-[#4a2a5d]">
+                <h3 className="text-3xl md:text-4xl font-semibold text-[#311143]">
+                  {phygitalService.title}
+                </h3>
+                <div className="text-base md:text-lg leading-relaxed space-y-4">
+                  {phygitalService.description}
                 </div>
-              </ScrollStackItem>
+              </div>
+            </div>
 
-              <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
-                  <div className="text-black text-center">
-                    <h3 className="text-2xl md:text-3xl font-bold text-black mb-4">Phygital & Media Innovation</h3>
-                    <p className="text-black/80 text-base md:text-lg leading-relaxed">
-                      Digital twins of venues, metaverse streaming, and cinematic video production in TV formats.
-                    </p>
-                  </div>
-                  <div className="flex justify-center items-center">
-                    <IconAugmentedReality className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
-                  </div>
-                </div>
-              </ScrollStackItem>
+            <div className="rounded-2xl border border-[#e4d7f3] bg-[#faf5ff] p-4">
+              <div className="text-sm font-semibold uppercase tracking-[0.3em] text-[#401344] mb-3">
+                Metaverse Preview
+              </div>
+              <div className="relative aspect-video w-full overflow-hidden rounded-xl shadow-inner">
+                <iframe
+                  src="https://www.youtube.com/embed/oSrllxgfGbQ"
+                  title="Phygital Metaverse Showcase"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  className="absolute inset-0 h-full w-full"
+                />
+              </div>
+            </div>
 
-              <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
-                  <div className="flex justify-center items-center md:order-1">
-                    <IconDeviceDesktop className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
-                  </div>
-                  <div className="text-black text-center md:order-2">
-                    <h3 className="text-2xl md:text-3xl font-bold text-black mb-4">Software Development</h3>
-                    <p className="text-black/80 text-base md:text-lg leading-relaxed">
-                      Specializing in both Web2 and Web3 technologies, smart contracts, and decentralized applications.
-                    </p>
-                  </div>
+            <a
+              href="https://explore.unyted.world/scene?id=81d67d50-057a-11f0-bc79-02243b6f7d63"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center justify-center self-start rounded-full bg-[#401344] px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_25px_rgba(64,19,68,0.3)] transition-transform hover:-translate-y-1 hover:bg-[#552060]"
+            >
+              Explore The Metaverse
+            </a>
+          </div>
+
+          <div id="service-projects" className="mt-10 flex flex-col gap-6 rounded-3xl bg-white shadow-[0_18px_45px_rgba(64,19,68,0.12)] border border-[#f0e6f6] p-8 md:p-12">
+            <div className="flex flex-col md:flex-row gap-6 md:gap-10">
+              <div className="shrink-0 rounded-2xl bg-[#f5ecff] p-4 w-fit">
+                <SoftwareIcon className="w-16 h-16 text-[#401344]" />
+              </div>
+              <div className="space-y-4 text-left text-[#4a2a5d]">
+                <h3 className="text-3xl md:text-4xl font-semibold text-[#311143]">
+                  {softwareService.title}
+                </h3>
+                <div className="text-base md:text-lg leading-relaxed space-y-4">
+                  {softwareService.description}
                 </div>
-              </ScrollStackItem>
-            </ScrollStack>
+              </div>
+            </div>
+
+            <div className="mt-4 space-y-6">
+              <div className="flex items-center justify-between flex-wrap gap-4">
+                <h4 className="text-xl md:text-2xl font-semibold text-[#311143]">
+                  Featured Build Partners & Flagship Products
+                </h4>
+                <a
+                  href="#contact"
+                  className="text-sm font-semibold uppercase tracking-[0.25em] text-[#401344] hover:text-[#6c2f88] transition-colors"
+                >
+                  Start A Build →
+                </a>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+                {featuredProjects.map(({ title: projectTitle, description: projectDescription, logo, href }) => (
+                  <a
+                    key={projectTitle}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex flex-col gap-5 rounded-3xl border border-[#e9dcf4] bg-[#fdfbff] p-8 md:p-9 shadow-md hover:shadow-xl transition-shadow min-h-[320px]"
+                  >
+                    <div className="flex items-center gap-3">
+                      <Image
+                        src={logo}
+                        alt={projectTitle}
+                        width={96}
+                        height={96}
+                        className="h-16 w-16 object-contain"
+                      />
+                      <h5 className="text-xl font-semibold text-[#311143]">{projectTitle}</h5>
+                    </div>
+                    <p className="text-base leading-relaxed text-[#513063]">
+                      {projectDescription}
+                    </p>
+                    <span className="text-sm font-semibold tracking-[0.18em] uppercase text-[#401344] group-hover:text-[#6c2f88] transition-colors">
+                      Visit Project →
+                    </span>
+                  </a>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -363,42 +464,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Our Projects Section */}
-      <section id="projects" className="py-20 px-6" style={{ backgroundColor: '#401344' }}>
-        <div className="container mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold text-center mb-16" style={{ color: '#FFFFFF !important' }}>
-            Our Projects
-          </h2>
-
-          <div className="py-20 flex flex-col lg:flex-row items-center justify-center w-full gap-4 mx-auto px-8">
-            {/* Shill and Chill Club */}
-            <ProjectCard
-              title="Shill and Chill Club"
-              description="A cryptocurrency community platform that enables users to earn rewards by sharing quality blockchain projects. Join the 'Chilluminati' community and discover the ultimate shill and chill experience in the crypto space."
-              logo="/logos/shillandchill.webp"
-              href="https://shillandchill.club"
-            />
-
-            {/* Earthy.tech */}
-            <ProjectCard
-              title="Earthy.tech"
-              description="A Web3 platform transforming global philanthropy through blockchain and AI. Features a carbon-negative network, AI-powered auditing, and transparent impact tracking for humanitarian and environmental causes."
-              logo="/logos/earthy.svg"
-              href="https://earthy.tech"
-            />
-
-            {/* Infinity Ængines */}
-            <ProjectCard
-              title="Infinity Ængines"
-              description="A groundbreaking hybrid technology conference in Dubai merging fashion, blockchain, AI, and metaverse. Features runway shows, expert workshops, and networking with 2,500+ live and 250,000+ virtual participants."
-              logo="/logos/IAELOGO.avif"
-              href="https://infinityaengines.com"
-            />
-          </div>
-        </div>
-      </section>
-
-
       {/* Contact Section */}
       <ContactFormSection />
 
@@ -437,7 +502,7 @@ export default function Home() {
               <ul className="space-y-2">
                 <li><a href="#our-events" className="text-gray-300 hover:text-white transition-colors text-sm">Our Events</a></li>
                 <li><a href="#services" className="text-gray-300 hover:text-white transition-colors text-sm">Services</a></li>
-                <li><a href="#wellness" className="text-gray-300 hover:text-white transition-colors text-sm">Wellness</a></li>
+                <li><a href="#service-projects" className="text-gray-300 hover:text-white transition-colors text-sm">Projects</a></li>
                 <li><a href="#contact" className="text-gray-300 hover:text-white transition-colors text-sm">Contact</a></li>
               </ul>
             </div>
@@ -446,10 +511,10 @@ export default function Home() {
             <div className="space-y-4">
               <h4 className="text-white text-base font-semibold">Featured Events</h4>
               <ul className="space-y-2">
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">Angels Villa Bali</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">Infinity AEngines</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">Elevator Pitch Battle</a></li>
-                <li><a href="#" className="text-gray-300 hover:text-white transition-colors text-sm">Upcoming Events</a></li>
+                <li><a href="#our-events" className="text-gray-300 hover:text-white transition-colors text-sm">Angels Villa Bali</a></li>
+                <li><a href="#our-events" className="text-gray-300 hover:text-white transition-colors text-sm">Infinity AEngines</a></li>
+                <li><a href="#our-events" className="text-gray-300 hover:text-white transition-colors text-sm">Elevator Pitch Battle</a></li>
+                <li><a href="#our-events" className="text-gray-300 hover:text-white transition-colors text-sm">Upcoming Events</a></li>
               </ul>
             </div>
 
@@ -502,227 +567,23 @@ export default function Home() {
 }
 
 
-interface ProjectCardProps {
-  title: string;
-  description: string;
-  logo: string;
-  href: string;
-}
-
-const ProjectCard: React.FC<ProjectCardProps> = ({
-  title,
-  description,
-  logo,
-  href,
-}) => {
-  return (
-    <div className="border border-purple-300/20 flex flex-col items-center justify-between max-w-sm w-full mx-auto p-6 relative h-[30rem] bg-purple-900/20"
-      style={{ borderRadius: '12px' }}
-    >
-      {/* Corner decorative elements */}
-      <ProjectCardIcon className="absolute h-6 w-6 -top-3 -left-3 text-purple-300" />
-      <ProjectCardIcon className="absolute h-6 w-6 -bottom-3 -left-3 text-purple-300" />
-      <ProjectCardIcon className="absolute h-6 w-6 -top-3 -right-3 text-purple-300" />
-      <ProjectCardIcon className="absolute h-6 w-6 -bottom-3 -right-3 text-purple-300" />
-
-      <div className="relative z-20 flex flex-col items-center justify-between h-full">
-        {/* Logo and Title */}
-        <div className="text-center w-full mx-auto flex flex-col items-center justify-center">
-          <div className="mb-6">
-            <Image
-              src={logo}
-              alt={title}
-              width={120}
-              height={120}
-              className="w-24 h-24 object-contain rounded-lg"
-              style={{
-                filter: (logo.includes('earthy') || logo.includes('IAELOGO')) ? 'invert(1) brightness(2)' : 'none'
-              }}
-            />
-          </div>
-          <h3 style={{ color: '#FFFFFF !important' }} className="text-xl font-bold text-center mb-4">{title}</h3>
-        </div>
-
-        {/* Description */}
-        <div className="flex-1 flex items-center justify-center px-2">
-          <p style={{ color: '#FFFFFF !important' }} className="text-sm text-center leading-relaxed">
-            {description}
-          </p>
-        </div>
-
-        {/* Button */}
-        <div className="flex justify-center">
-          <CustomButton
-            href={href}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn More
-          </CustomButton>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const ProjectCardIcon = ({ className, ...rest }: any) => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 24 24"
-      strokeWidth="1.5"
-      stroke="currentColor"
-      className={className}
-      {...rest}
-    >
-      <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m6-6H6" />
-    </svg>
-  );
-};
 
 interface EventContentProps {
   title: string;
   description: ReactNode;
 }
 
-const EventContent = ({ title, description }: EventContentProps) => {
-  const revealRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  const memoizedLaserFlow = useMemo(
-    () => (
-      <LaserFlow
-        horizontalBeamOffset={0.1}
-        verticalBeamOffset={0.0}
-        color="#FF79C6"
-        fogIntensity={1.2}
-        wispIntensity={12.0}
-        flowStrength={0.4}
-        decay={0.8}
-      />
-    ),
-    []
-  );
-
-  return (
-    <div
-      style={{
-        height: isMobile ? '700px' : '900px',
-        position: 'relative',
-        overflow: 'hidden',
-        backgroundColor: '#401344',
-        marginBottom: '2rem'
-      }}
-      onMouseMove={(e) => {
-        const rect = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const el = revealRef.current;
-        if (el) {
-          el.style.setProperty('--mx', `${x}px`);
-          el.style.setProperty('--my', `${y + rect.height * 0.5}px`);
-        }
-      }}
-      onMouseLeave={() => {
-        const el = revealRef.current;
-        if (el) {
-          el.style.setProperty('--mx', '-9999px');
-          el.style.setProperty('--my', '-9999px');
-        }
-      }}
-    >
-      {memoizedLaserFlow}
-
-      <div
-        style={{
-          position: 'absolute',
-          inset: 0,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: isMobile ? '1.5rem' : '4rem',
-          zIndex: 6,
-        }}
-      >
-        <div
-          style={{
-            width: '100%',
-            maxWidth: '960px',
-            backgroundColor: 'rgba(255, 255, 255, 0.92)',
-            borderRadius: '28px',
-            border: '1px solid rgba(64, 19, 68, 0.35)',
-            boxShadow: '0 25px 65px rgba(0, 0, 0, 0.45)',
-            backdropFilter: 'blur(10px)',
-            padding: isMobile ? '1.75rem' : '3rem',
-            color: '#311143',
-            maxHeight: '100%',
-            overflowY: 'auto',
-          }}
-        >
-          <div
-            style={{
-              fontSize: isMobile ? '1.5rem' : '2rem',
-              lineHeight: 1,
-              marginBottom: isMobile ? '1.25rem' : '1.75rem',
-            }}
-          >
-            ⸻
-          </div>
-
-          <h2
-            style={{
-              fontSize: isMobile ? '1.5rem' : '2.4rem',
-              fontWeight: 700,
-              marginBottom: isMobile ? '1rem' : '1.5rem',
-              lineHeight: 1.2,
-            }}
-          >
-            {title}
-          </h2>
-
-          <div
-            style={{
-              fontSize: isMobile ? '0.95rem' : '1.1rem',
-              lineHeight: isMobile ? 1.6 : 1.8,
-              color: 'rgba(49, 17, 67, 0.92)',
-              display: 'grid',
-              gap: isMobile ? '0.75rem' : '1rem',
-            }}
-          >
-            {description}
-          </div>
-        </div>
+const EventContent = ({ title, description }: EventContentProps) => (
+  <div className="rounded-[32px] bg-white shadow-[0_24px_60px_rgba(0,0,0,0.2)] mb-10">
+    <div className="px-6 md:px-12 py-10 md:py-14 text-[#311143] space-y-6">
+      <div className="text-2xl md:text-3xl">⸻</div>
+      <h2 className="text-3xl md:text-4xl font-bold leading-snug">{title}</h2>
+      <div className="space-y-4 text-base md:text-lg leading-relaxed text-[#321146]">
+        {description}
       </div>
-
-      <div
-        ref={revealRef}
-        style={{
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          top: '0',
-          left: '0',
-          zIndex: 5,
-          mixBlendMode: 'lighten',
-          opacity: 0.3,
-          pointerEvents: 'none',
-          '--mx': '-9999px',
-          '--my': '-9999px',
-          background:
-            'radial-gradient(circle at var(--mx) var(--my), rgba(255, 121, 198, 0.25) 0px, rgba(255, 121, 198, 0.1) 120px, rgba(255, 121, 198, 0) 220px)',
-        } as React.CSSProperties}
-      />
     </div>
-  );
-};
+  </div>
+);
 
 
 const HatimaPhotoSlider = () => {
