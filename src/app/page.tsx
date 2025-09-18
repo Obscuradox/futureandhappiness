@@ -8,6 +8,7 @@ import {
   IconBuilding,
   IconDeviceDesktop,
   IconHeart,
+  IconAugmentedReality,
 } from "@tabler/icons-react";
 import ScrollExpandMedia from '@/components/blocks/scroll-expansion-hero';
 import LaserFlow from '@/components/LaserFlow';
@@ -202,7 +203,7 @@ export default function Home() {
           <div className="relative z-10">
             <ScrollStack useWindowScroll={true}>
               <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center h-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
                   <div className="flex justify-center items-center md:order-1">
                     <IconVideo className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
                   </div>
@@ -216,7 +217,7 @@ export default function Home() {
               </ScrollStackItem>
 
               <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center h-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
                   <div className="text-black text-center">
                     <h3 className="text-2xl md:text-3xl font-bold text-black mb-4">Event Marketing</h3>
                     <p className="text-black/80 text-base md:text-lg leading-relaxed">
@@ -230,7 +231,7 @@ export default function Home() {
               </ScrollStackItem>
 
               <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center h-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
                   <div className="flex justify-center items-center md:order-1">
                     <IconBuilding className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
                   </div>
@@ -244,7 +245,7 @@ export default function Home() {
               </ScrollStackItem>
 
               <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center h-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
                   <div className="text-black text-center">
                     <h3 className="text-2xl md:text-3xl font-bold text-black mb-4">Phygital & Media Innovation</h3>
                     <p className="text-black/80 text-base md:text-lg leading-relaxed">
@@ -252,13 +253,13 @@ export default function Home() {
                     </p>
                   </div>
                   <div className="flex justify-center items-center">
-                    <IconDeviceDesktop className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
+                    <IconAugmentedReality className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
                   </div>
                 </div>
               </ScrollStackItem>
 
               <ScrollStackItem itemClassName="bg-white">
-                <div className="grid grid-cols-1 md:grid-cols-2 items-center h-full">
+                <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 md:gap-12 h-full">
                   <div className="flex justify-center items-center md:order-1">
                     <IconDeviceDesktop className="w-32 h-32 md:w-40 md:h-40 lg:w-48 lg:h-48 text-black" />
                   </div>
@@ -311,20 +312,20 @@ export default function Home() {
           <div className="mb-20">
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div className="order-2 md:order-1">
-                <h3 className="text-3xl font-bold mb-4 text-[#401344]">Razzaq Singer</h3>
+                <h3 className="text-3xl font-bold mb-4 text-[#401344]">Abdur Razzaq Singer</h3>
                 <h4 className="text-xl font-semibold mb-6 text-gray-600">Co-Founder</h4>
                 <div className="space-y-4 text-gray-700 leading-relaxed">
                   <p>
                     With a background shaped by resilience and vision, Abdur-Razzaq Singer — now known as Razzaq Singer — has transformed his life experiences into a driving force for global innovation. From humble beginnings and overcoming personal struggles, he forged his path as a technology entrepreneur, channeling his deep compassion for humanity into building solutions that address some of the world&apos;s greatest challenges.
                   </p>
                   <p>
-                    Sam&apos;s expertise spans blockchain architecture, artificial intelligence integration, and decentralized finance. He has worked with international governments and organizations, designing scalable systems that merge social impact with technological progress. His achievements include leading the development of Earthy, the world&apos;s first natively carbon-negative blockchain, and contributing to groundbreaking projects in identity, sustainability, and global impact ecosystems.
+                    Razzaq&apos;s expertise spans blockchain architecture, artificial intelligence integration, and decentralized finance. He has worked with international governments and organizations, designing scalable systems that merge social impact with technological progress. His achievements include leading the development of Earthy, the world&apos;s first natively carbon-negative blockchain, and contributing to groundbreaking projects in identity, sustainability, and global impact ecosystems.
                   </p>
                   <p>
-                    After relocating to Dubai, Sam expanded his mission beyond technology into community building. He has hosted high-level events uniting sovereign leaders, investors, innovators, and philanthropists — ensuring that ideas of consequence are not just spoken but acted upon. His focus is not only on digital transformation but on empowering people with the tools, trust, and networks they need to enact real change.
+                    After relocating to Dubai, Razzaq expanded his mission beyond technology into community building. He has hosted high-level events uniting sovereign leaders, investors, innovators, and philanthropists — ensuring that ideas of consequence are not just spoken but acted upon. His focus is not only on digital transformation but on empowering people with the tools, trust, and networks they need to enact real change.
                   </p>
                   <p>
-                    Sam&apos;s ultimate goal is to bridge innovation with humanity: creating systems that help societies thrive, ensuring transparency, sustainability, and empowerment at every level. His life journey reflects his belief that technology is most powerful when it uplifts people and amplifies the good we are capable of achieving together.
+                    Razzaq&apos;s ultimate goal is to bridge innovation with humanity: creating systems that help societies thrive, ensuring transparency, sustainability, and empowerment at every level. His life journey reflects his belief that technology is most powerful when it uplifts people and amplifies the good we are capable of achieving together.
                   </p>
                 </div>
               </div>
@@ -343,7 +344,7 @@ export default function Home() {
               <div>
                 <h3 className="text-2xl font-bold mb-6 text-[#401344]">Their Partnership</h3>
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  Together, Razzaq and Hatima embody a union of vision and purpose. Their partnership is built on shared values of creativity, compassion, and innovation. While Hatima curates spaces where innovators and investors connect, Sam builds the underlying technologies and ecosystems that make lasting change possible. Side by side, they see the world not just as it is, but as it could be — and dedicate their lives to turning that vision into reality.
+                  Together, Razzaq and Hatima embody a union of vision and purpose. Their partnership is built on shared values of creativity, compassion, and innovation. While Hatima curates spaces where innovators and investors connect, Razzaq builds the underlying technologies and ecosystems that make lasting change possible. Side by side, they see the world not just as it is, but as it could be — and dedicate their lives to turning that vision into reality.
                 </p>
               </div>
             </div>
@@ -912,4 +913,3 @@ const ContactFormSection = () => {
     </section>
   );
 };
-

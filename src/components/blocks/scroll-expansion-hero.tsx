@@ -9,7 +9,12 @@ import {
 } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { IconVolume, IconVolumeOff, IconMaximize } from '@tabler/icons-react';
+import {
+  IconVolume,
+  IconVolumeOff,
+  IconMaximize,
+  IconPlayerPlay,
+} from '@tabler/icons-react';
 
 interface ScrollExpandMediaProps {
   mediaType?: 'video' | 'image';
@@ -39,7 +44,12 @@ const ScrollExpandMedia = ({
   const [mediaFullyExpanded, setMediaFullyExpanded] = useState<boolean>(false);
   const [isMobileState, setIsMobileState] = useState<boolean>(false);
   const [isMuted, setIsMuted] = useState<boolean>(true);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [hasUserStartedPlayback, setHasUserStartedPlayback] =
+    useState<boolean>(false);
+  const animationFrameRef = useRef<number | null>(null);
+  const scrollProgressRef = useRef<number>(0);
+  const mediaFullyExpandedRef = useRef<boolean>(false);
+  const showContentRef = useRef<boolean>(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -47,15 +57,17 @@ const ScrollExpandMedia = ({
 
   useEffect(() => {
     setScrollProgress(0);
+    scrollProgressRef.current = 0;
     setShowContent(false);
+    showContentRef.current = false;
     setMediaFullyExpanded(false);
+    mediaFullyExpandedRef.current = false;
   }, [mediaType]);
 
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       if (!sectionRef.current) return;
 
-      // On mobile, allow normal scrolling always
       if (isMobileState) {
         return;
       }
@@ -63,73 +75,97 @@ const ScrollExpandMedia = ({
       const rect = sectionRef.current.getBoundingClientRect();
       const viewportHeight = window.innerHeight;
 
-      // Start animation earlier when section enters viewport
-      // Animation should begin when section is 25% visible from the top
-      const sectionCenter = rect.top + rect.height / 2;
-      const viewportCenter = viewportHeight / 2;
-      const triggerPoint = viewportHeight * 0.75; // Start when section is 25% down from top
+      const triggerPoint = viewportHeight * 0.75;
       const isProperlyInView = rect.top <= triggerPoint && rect.bottom >= 0;
 
       if (!isProperlyInView) return;
 
-      // Allow normal scrolling when fully expanded and scrolling down
-      if (mediaFullyExpanded && e.deltaY > 0) {
+      const currentProgress = scrollProgressRef.current;
+      const isExpanded = mediaFullyExpandedRef.current;
+
+      if (isExpanded && e.deltaY > 0) {
+        if (animationFrameRef.current !== null) {
+          cancelAnimationFrame(animationFrameRef.current);
+          animationFrameRef.current = null;
+        }
         return;
       }
 
-      // Allow normal scrolling when not expanded and scrolling up
-      if (!mediaFullyExpanded && scrollProgress <= 0.01 && e.deltaY < 0) {
+      if (!isExpanded && currentProgress <= 0.01 && e.deltaY < 0) {
         return;
       }
 
-      // Add timeout to prevent rapid fire scroll events
-      if (scrollTimeoutRef.current) {
-        return;
+      const deltaY = e.deltaY;
+
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
       }
 
-      // Reduced intensity to prevent scroll locking
       e.preventDefault();
 
-      const scrollDelta = e.deltaY * 0.002; // Balanced speed to prevent freezing
-      const newProgress = Math.min(Math.max(scrollProgress + scrollDelta, 0), 1);
-      setScrollProgress(newProgress);
+      animationFrameRef.current = window.requestAnimationFrame(() => {
+        const sensitivity = 0.0025;
+        const nextProgress = Math.min(
+          Math.max(scrollProgressRef.current + deltaY * sensitivity, 0),
+          1
+        );
 
-      // Set timeout to allow next scroll event
-      scrollTimeoutRef.current = setTimeout(() => {
-        scrollTimeoutRef.current = null;
-      }, 16); // ~60fps
-
-      if (newProgress >= 1) {
-        setMediaFullyExpanded(true);
-        setShowContent(true);
-      } else if (newProgress < 0.75) {
-        setShowContent(false);
-        if (newProgress <= 0.01) {
-          setMediaFullyExpanded(false);
+        if (nextProgress === scrollProgressRef.current) {
+          animationFrameRef.current = null;
+          return;
         }
-      }
+
+        scrollProgressRef.current = nextProgress;
+        setScrollProgress(nextProgress);
+
+        if (nextProgress >= 1) {
+          if (!mediaFullyExpandedRef.current) {
+            mediaFullyExpandedRef.current = true;
+            setMediaFullyExpanded(true);
+          }
+          if (!showContentRef.current) {
+            showContentRef.current = true;
+            setShowContent(true);
+          }
+        } else {
+          if (nextProgress < 0.75 && showContentRef.current) {
+            showContentRef.current = false;
+            setShowContent(false);
+          }
+
+          if (nextProgress <= 0.01 && mediaFullyExpandedRef.current) {
+            mediaFullyExpandedRef.current = false;
+            setMediaFullyExpanded(false);
+          }
+        }
+
+        animationFrameRef.current = null;
+      });
     };
 
-    if (sectionRef.current) {
-      const section = sectionRef.current;
+    const section = sectionRef.current;
 
-      // Only add wheel listener on desktop, completely avoid touch events on mobile
-      if (!isMobileState) {
-        section.addEventListener('wheel', handleWheel as unknown as EventListener, {
-          passive: false,
-        });
-      }
-
-      return () => {
-        if (!isMobileState) {
-          section.removeEventListener(
-            'wheel',
-            handleWheel as unknown as EventListener
-          );
-        }
-      };
+    if (!section || isMobileState) {
+      return;
     }
-  }, [scrollProgress, mediaFullyExpanded, isMobileState]);
+
+    section.addEventListener('wheel', handleWheel as unknown as EventListener, {
+      passive: false,
+    });
+
+    return () => {
+      section.removeEventListener(
+        'wheel',
+        handleWheel as unknown as EventListener
+      );
+
+      if (animationFrameRef.current !== null) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+    };
+  }, [isMobileState]);
 
   useEffect(() => {
     const checkIfMobile = (): void => {
@@ -138,8 +174,11 @@ const ScrollExpandMedia = ({
       // On mobile, always show content and expand media
       if (isMobile) {
         setShowContent(true);
+        showContentRef.current = true;
         setMediaFullyExpanded(true);
+        mediaFullyExpandedRef.current = true;
         setScrollProgress(1);
+        scrollProgressRef.current = 1;
       }
     };
 
@@ -148,6 +187,23 @@ const ScrollExpandMedia = ({
 
     return () => window.removeEventListener('resize', checkIfMobile);
   }, []);
+
+  useEffect(() => {
+    if (mediaType !== 'video') {
+      return;
+    }
+
+    if (isMobileState) {
+      setHasUserStartedPlayback(false);
+
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.currentTime = 0;
+      }
+    } else {
+      setHasUserStartedPlayback(true);
+    }
+  }, [isMobileState, mediaSrc, mediaType]);
 
   const mediaWidth = 600 + (isMobileState ? 350 : scrollProgress * 950);
   const mediaHeight = 350 + (isMobileState ? 250 : scrollProgress * 450);
@@ -170,6 +226,85 @@ const ScrollExpandMedia = ({
       }
     }
   };
+
+  const handleMobilePlay = () => {
+    if (mediaType !== 'video') {
+      return;
+    }
+
+    if (mediaSrc.includes('vimeo.com')) {
+      setHasUserStartedPlayback(true);
+      return;
+    }
+
+    if (!videoRef.current) {
+      return;
+    }
+
+    const playPromise = videoRef.current.play();
+
+    if (playPromise && typeof playPromise.then === 'function') {
+      playPromise
+        .then(() => {
+          setHasUserStartedPlayback(true);
+        })
+        .catch(() => {
+          // Keep overlay visible so the user can try again if playback fails
+          setHasUserStartedPlayback(false);
+        });
+    } else {
+      setHasUserStartedPlayback(true);
+    }
+  };
+
+  const shouldShowMobileOverlay =
+    isMobileState && mediaType === 'video' && !hasUserStartedPlayback;
+
+  const mobilePlayOverlay = shouldShowMobileOverlay ? (
+    <div className='absolute inset-0 z-30 flex items-center justify-center rounded-xl'>
+      <button
+        onClick={handleMobilePlay}
+        className='flex h-16 w-16 items-center justify-center rounded-full bg-white/95 text-black shadow-lg transition-transform active:scale-95'
+        aria-label='Play video'
+      >
+        <IconPlayerPlay className='h-8 w-8 translate-x-[2px]' />
+      </button>
+    </div>
+  ) : null;
+
+  const vimeoParams = new URLSearchParams({
+    autoplay:
+      !isMobileState || hasUserStartedPlayback
+        ? '1'
+        : '0',
+    loop: '1',
+    autopause: '0',
+    controls: '1',
+    badge: '0',
+    muted: '1',
+  });
+
+  const vimeoSrc = `${mediaSrc}${mediaSrc.includes('?') ? '&' : '?'}${vimeoParams.toString()}`;
+
+  const mediaPointerEvents = isMobileState
+    ? hasUserStartedPlayback
+      ? 'auto'
+      : 'none'
+    : mediaFullyExpanded
+      ? 'auto'
+      : 'none';
+
+  useEffect(() => {
+    scrollProgressRef.current = scrollProgress;
+  }, [scrollProgress]);
+
+  useEffect(() => {
+    mediaFullyExpandedRef.current = mediaFullyExpanded;
+  }, [mediaFullyExpanded]);
+
+  useEffect(() => {
+    showContentRef.current = showContent;
+  }, [showContent]);
 
   return (
     <div
@@ -282,7 +417,7 @@ const ScrollExpandMedia = ({
                   ) : mediaSrc.includes('vimeo.com') ? (
                     <div className='relative w-full h-full'>
                       <iframe
-                        src={mediaSrc + (mediaSrc.includes('?') ? '&' : '?') + 'autoplay=1&loop=1&autopause=0&controls=1&badge=0&muted=1'}
+                        src={vimeoSrc}
                         width='100%'
                         height='100%'
                         frameBorder='0'
@@ -290,8 +425,10 @@ const ScrollExpandMedia = ({
                         referrerPolicy='strict-origin-when-cross-origin'
                         className='w-full h-full rounded-xl'
                         title={title}
-                        style={{ pointerEvents: mediaFullyExpanded ? 'auto' : 'none' }}
+                        style={{ pointerEvents: mediaPointerEvents }}
                       />
+
+                      {mobilePlayOverlay}
 
                       {!isMobileState && (
                         <div className='absolute -bottom-16 left-1/2 transform -translate-x-1/2 flex gap-4 z-20'>
@@ -323,15 +460,16 @@ const ScrollExpandMedia = ({
                         ref={videoRef}
                         src={mediaSrc}
                         poster={posterSrc}
-                        autoPlay={false}
+                        autoPlay={!isMobileState && mediaFullyExpanded}
                         muted={true}
                         loop={false}
                         playsInline
-                        preload='auto'
+                        preload={isMobileState ? 'metadata' : 'auto'}
                         className='w-full h-full object-cover rounded-xl'
-                        controls={mediaFullyExpanded}
-                        style={{ pointerEvents: mediaFullyExpanded ? 'auto' : 'none' }}
+                        controls={isMobileState ? hasUserStartedPlayback : mediaFullyExpanded}
+                        style={{ pointerEvents: mediaPointerEvents }}
                       />
+                      {mobilePlayOverlay}
                       {!isMobileState && (
                         <div className='absolute -bottom-16 left-1/2 transform -translate-x-1/2 flex gap-4 z-20'>
                           <button
