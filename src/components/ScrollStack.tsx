@@ -1,4 +1,11 @@
-import React, { ReactNode, useLayoutEffect, useRef, useCallback } from 'react';
+import React, {
+  ReactNode,
+  useLayoutEffect,
+  useRef,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 import Lenis from 'lenis';
 
 export interface ScrollStackItemProps {
@@ -56,6 +63,26 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   const cardsRef = useRef<HTMLElement[]>([]);
   const lastTransformsRef = useRef(new Map<number, any>());
   const isUpdatingRef = useRef(false);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    const detectTouch = () => {
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      const pointerCoarse = window.matchMedia('(pointer: coarse)').matches;
+      const smallViewport = window.innerWidth < 1024;
+      setIsTouchDevice(pointerCoarse || smallViewport);
+    };
+
+    detectTouch();
+    window.addEventListener('resize', detectTouch);
+
+    return () => {
+      window.removeEventListener('resize', detectTouch);
+    };
+  }, []);
 
   const calculateProgress = useCallback((scrollTop: number, start: number, end: number) => {
     if (scrollTop < start) return 0;
@@ -100,6 +127,8 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   );
 
   const updateCardTransforms = useCallback(() => {
+    if (isTouchDevice) return;
+
     if (!cardsRef.current.length || isUpdatingRef.current) return;
 
     isUpdatingRef.current = true;
@@ -204,7 +233,8 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     calculateProgress,
     parsePercentage,
     getScrollData,
-    getElementOffset
+    getElementOffset,
+    isTouchDevice
   ]);
 
   const handleScroll = useCallback(() => {
@@ -212,6 +242,18 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
   }, [updateCardTransforms]);
 
   const setupLenis = useCallback(() => {
+    if (isTouchDevice) {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      if (lenisRef.current) {
+        lenisRef.current.destroy();
+        lenisRef.current = null;
+      }
+      return null;
+    }
+
     if (useWindowScroll) {
       const lenis = new Lenis({
         duration: 1.2,
@@ -265,9 +307,24 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
       lenisRef.current = lenis;
       return lenis;
     }
-  }, [handleScroll, useWindowScroll]);
+  }, [handleScroll, useWindowScroll, isTouchDevice]);
 
   useLayoutEffect(() => {
+    if (isTouchDevice) {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+      if (lenisRef.current) {
+        lenisRef.current.destroy();
+        lenisRef.current = null;
+      }
+      cardsRef.current = [];
+      lastTransformsRef.current.clear();
+      isUpdatingRef.current = false;
+      return;
+    }
+
     if (!useWindowScroll && !scrollerRef.current) return;
 
     const cards = Array.from(
@@ -320,8 +377,19 @@ const ScrollStack: React.FC<ScrollStackProps> = ({
     useWindowScroll,
     onStackComplete,
     setupLenis,
-    updateCardTransforms
+    updateCardTransforms,
+    isTouchDevice
   ]);
+
+  if (isTouchDevice) {
+    return (
+      <div className={`relative w-full ${className}`.trim()}>
+        <div className="px-4 sm:px-6 py-12 flex flex-col gap-8">
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   if (useWindowScroll) {
     return (

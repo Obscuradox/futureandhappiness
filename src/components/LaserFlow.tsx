@@ -328,7 +328,7 @@ export const LaserFlow: React.FC<Props> = memo(({
     renderer.setPixelRatio(currentDprRef.current);
     renderer.shadowMap.enabled = false;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.setClearColor(0xffffff, 1);
+    renderer.setClearColor(0x401344, 1);
     const canvas = renderer.domElement;
     canvas.style.width = '100%';
     canvas.style.height = '100%';
@@ -582,7 +582,13 @@ export const LaserFlow: React.FC<Props> = memo(({
     color
   ]);
 
-  return <div ref={mountRef} className={`w-full h-full relative ${className || ''}`} style={style} />;
+  return (
+    <div
+      ref={mountRef}
+      className={`w-full h-full relative ${className || ''}`}
+      style={{ backgroundColor: '#401344', ...(style || {}) }}
+    />
+  );
 });
 
 export default LaserFlow;

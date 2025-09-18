@@ -1,5 +1,5 @@
 import { Renderer, Program, Mesh, Triangle } from 'ogl';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface BalatroProps {
   spinRotation?: number;
@@ -134,9 +134,48 @@ export default function Balatro({
   mouseInteraction = true
 }: BalatroProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const evaluate = () => {
+      if (typeof window === 'undefined') return false;
+
+      const pointerCoarse = window.matchMedia('(pointer: coarse)').matches;
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+      const smallViewport = window.innerWidth < 1024;
+
+      return !(pointerCoarse || prefersReducedMotion || smallViewport);
+    };
+
+    const updateShouldAnimate = () => {
+      setShouldAnimate(evaluate());
+    };
+
+    updateShouldAnimate();
+
+    window.addEventListener('resize', updateShouldAnimate);
+
+    const pointerQuery = typeof window !== 'undefined'
+      ? window.matchMedia('(pointer: coarse)')
+      : null;
+    const motionQuery = typeof window !== 'undefined'
+      ? window.matchMedia('(prefers-reduced-motion: reduce)')
+      : null;
+
+    pointerQuery?.addEventListener('change', updateShouldAnimate);
+    motionQuery?.addEventListener('change', updateShouldAnimate);
+
+    return () => {
+      window.removeEventListener('resize', updateShouldAnimate);
+      pointerQuery?.removeEventListener('change', updateShouldAnimate);
+      motionQuery?.removeEventListener('change', updateShouldAnimate);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!shouldAnimate || !containerRef.current) return;
     const container = containerRef.current;
     const renderer = new Renderer();
     const gl = renderer.gl;
@@ -206,6 +245,7 @@ export default function Balatro({
       gl.getExtension('WEBGL_lose_context')?.loseContext();
     };
   }, [
+    shouldAnimate,
     spinRotation,
     spinSpeed,
     offset,
@@ -221,5 +261,18 @@ export default function Balatro({
     mouseInteraction
   ]);
 
-  return <div ref={containerRef} className="w-full h-full" />;
+  return (
+    <div
+      ref={containerRef}
+      className="w-full h-full"
+      style={
+        shouldAnimate
+          ? undefined
+          : {
+              background:
+                'radial-gradient(circle at top, rgba(64,19,68,0.6), rgba(0,0,0,0.85))',
+            }
+      }
+    />
+  );
 }

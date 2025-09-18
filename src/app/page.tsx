@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, ReactNode, useRef } from 'react';
 import Spline from '@splinetool/react-spline';
 import Image from 'next/image';
 import {
@@ -12,7 +12,6 @@ import {
 } from "@tabler/icons-react";
 import ScrollExpandMedia from '@/components/blocks/scroll-expansion-hero';
 import LaserFlow from '@/components/LaserFlow';
-import { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -102,13 +101,19 @@ export default function Home() {
       >
         <EventContent
           title="Angels Villa Bali"
-          description="Exclusive month-long founders' retreat in Bali. 20 startups selected from 100+ applications."
-          highlights={[
-            "Month-long acceleration program",
-            "Professional video shoots & pitching",
-            "Industry expert masterclasses",
-            "Luxury villa setting"
-          ]}
+          description={(
+            <>
+              <p>
+                Nestled in the lush serenity of Bali, Angels Villa Bali is an immersive founders’ and investors’ retreat like no other. From over 100 startup applications, a curated group of 20 innovative projects were selected to join the villa during the season (1 month).
+              </p>
+              <p>
+                Throughout the program, founders participated in professional video shoots, investor pitching sessions, and exclusive masterclasses from industry experts. Blending luxury villa lifestyle, curated wellness, and business acceleration, Angels Villa became both a creative content hub and a launchpad for impact-driven innovation.
+              </p>
+              <p>
+                It’s where creativity meets clarity, connections turn into collaborations, and startups get the exposure they need to thrive.
+              </p>
+            </>
+          )}
         />
       </ScrollExpandMedia>
       </div>
@@ -125,13 +130,16 @@ export default function Home() {
       >
         <EventContent
           title="Infinity AEngines – The Ultimate Innovations Show"
-          description="Immersive innovation showcase at TODA Dubai featuring dual-reality experience: physical venue + metaverse digital twin."
-          highlights={[
-            "Phygital event with global livestream reach",
-            "Cutting-edge tech demos and startup pitches",
-            "Real-world networking meets digital innovation",
-            "Cinematic storytelling and creative showcases"
-          ]}
+          description={(
+            <>
+              <p>
+                Step into the future with Infinity AEngines, hosted at TODA – Theatre of Digital Art, Dubai. This immersive event unfolds simultaneously in two realities: on the physical stage in Dubai and in the metaverse digital twin of the venue. While investors, founders, and creators gather in person, audiences worldwide can join through the virtual space, experiencing live streaming and interactive features.
+              </p>
+              <p>
+                The program blends cutting-edge tech, visionary keynote sessions, creative showcases, and startup pitches with cinematic storytelling. With its dual format, Infinity AEngines bridges real-world networking and digital innovation, creating a phygital platform where investment, creativity, and technology converge without borders.
+              </p>
+            </>
+          )}
         />
       </ScrollExpandMedia>
       </div>
@@ -148,13 +156,16 @@ export default function Home() {
       >
         <EventContent
           title="Elevator Pitch Battle Dubai"
-          description="High-energy pitch competition connecting tech startups with investors in an exclusive Dubai villa setting during Bitcoin MENA & AI Blockchain Show."
-          highlights={[
-            "3-minute rapid pitches from curated startups",
-            "Expert jury panel with rigorous selection",
-            "Professional video content and digital activations",
-            "Wellness-integrated villa networking experience"
-          ]}
+          description={(
+            <>
+              <p>
+                Elevator Pitch Battle is a high-energy pitch competition organized by Future of Happiness. Held during the Bitcoin MENA & AI Blockchain Show in Dubai, it convenes ambitious tech & blockchain startups, investors, and thought leaders. Startups deliver rapid 3-minute elevator pitches, face the jury, and vie for recognition, feedback, and exposure.
+              </p>
+              <p>
+                With stringent selection, high-calibre jury, and a dynamic networking environment, this event is your stage to show what you’re building. Hosted alongside wellness in a villa setting, with professional video content and digital twin activations, it’s more than a pitch—it’s a full branded startup experience.
+              </p>
+            </>
+          )}
         />
       </ScrollExpandMedia>
       </div>
@@ -572,8 +583,7 @@ const ProjectCardIcon = ({ className, ...rest }: any) => {
 
 interface EventContentProps {
   title: string;
-  description: string;
-  highlights: string[];
+  description: ReactNode;
 }
 
 const EventContent = ({ title, description }: EventContentProps) => {
@@ -587,25 +597,28 @@ const EventContent = ({ title, description }: EventContentProps) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const memoizedLaserFlow = useMemo(() => (
-    <LaserFlow
-      horizontalBeamOffset={0.1}
-      verticalBeamOffset={0.0}
-      color="#401344"
-      fogIntensity={1.2}
-      wispIntensity={12.0}
-      flowStrength={0.4}
-      decay={0.8}
-    />
-  ), []);
+  const memoizedLaserFlow = useMemo(
+    () => (
+      <LaserFlow
+        horizontalBeamOffset={0.1}
+        verticalBeamOffset={0.0}
+        color="#FF79C6"
+        fogIntensity={1.2}
+        wispIntensity={12.0}
+        flowStrength={0.4}
+        decay={0.8}
+      />
+    ),
+    []
+  );
 
   return (
     <div
       style={{
-        height: isMobile ? '600px' : '800px',
+        height: isMobile ? '700px' : '900px',
         position: 'relative',
         overflow: 'hidden',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#401344',
         marginBottom: '2rem'
       }}
       onMouseMove={(e) => {
@@ -628,46 +641,65 @@ const EventContent = ({ title, description }: EventContentProps) => {
     >
       {memoizedLaserFlow}
 
-      <div style={{
-        position: 'absolute',
-        top: isMobile ? '75%' : '70%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '95%',
-        height: isMobile ? '50%' : '45%',
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderRadius: '20px',
-        border: '2px solid #401344',
-        boxShadow: '0 0 20px rgba(64, 19, 68, 0.4), 0 0 40px rgba(64, 19, 68, 0.2), inset 0 0 20px rgba(64, 19, 68, 0.1)',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: isMobile ? '1.5rem' : '2rem',
-        color: 'black',
-        zIndex: 6,
-        overflow: 'auto',
-        backdropFilter: 'blur(10px)',
-        animation: 'laser-glow 3s ease-in-out infinite',
-        minWidth: '100% !important'
-      }}>
-        <h2 style={{
-          fontSize: isMobile ? '1.25rem' : '2rem',
-          fontWeight: 'bold',
-          marginBottom: '1rem',
-          color: '#401344'
-        }}>
-          {title}
-        </h2>
+      <div
+        style={{
+          position: 'absolute',
+          inset: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: isMobile ? '1.5rem' : '4rem',
+          zIndex: 6,
+        }}
+      >
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '960px',
+            backgroundColor: 'rgba(255, 255, 255, 0.92)',
+            borderRadius: '28px',
+            border: '1px solid rgba(64, 19, 68, 0.35)',
+            boxShadow: '0 25px 65px rgba(0, 0, 0, 0.45)',
+            backdropFilter: 'blur(10px)',
+            padding: isMobile ? '1.75rem' : '3rem',
+            color: '#311143',
+            maxHeight: '100%',
+            overflowY: 'auto',
+          }}
+        >
+          <div
+            style={{
+              fontSize: isMobile ? '1.5rem' : '2rem',
+              lineHeight: 1,
+              marginBottom: isMobile ? '1.25rem' : '1.75rem',
+            }}
+          >
+            ⸻
+          </div>
 
-        <p style={{
-          fontSize: isMobile ? '0.9rem' : '1.1rem',
-          lineHeight: '1.6',
-          marginBottom: isMobile ? '1rem' : '1.5rem',
-          color: '#000000',
-          minWidth: '100% !important'
-        }}>
-          {description}
-        </p>
+          <h2
+            style={{
+              fontSize: isMobile ? '1.5rem' : '2.4rem',
+              fontWeight: 700,
+              marginBottom: isMobile ? '1rem' : '1.5rem',
+              lineHeight: 1.2,
+            }}
+          >
+            {title}
+          </h2>
 
+          <div
+            style={{
+              fontSize: isMobile ? '0.95rem' : '1.1rem',
+              lineHeight: isMobile ? 1.6 : 1.8,
+              color: 'rgba(49, 17, 67, 0.92)',
+              display: 'grid',
+              gap: isMobile ? '0.75rem' : '1rem',
+            }}
+          >
+            {description}
+          </div>
+        </div>
       </div>
 
       <div
@@ -684,7 +716,8 @@ const EventContent = ({ title, description }: EventContentProps) => {
           pointerEvents: 'none',
           '--mx': '-9999px',
           '--my': '-9999px',
-          background: 'radial-gradient(circle at var(--mx) var(--my), rgba(64,19,68,0.3) 0px, rgba(64,19,68,0.15) 60px, rgba(64,19,68,0.05) 120px, rgba(64,19,68,0) 180px)',
+          background:
+            'radial-gradient(circle at var(--mx) var(--my), rgba(255, 121, 198, 0.25) 0px, rgba(255, 121, 198, 0.1) 120px, rgba(255, 121, 198, 0) 220px)',
         } as React.CSSProperties}
       />
     </div>
