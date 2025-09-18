@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Host
+Host: https://futureandhappiness.com
+
+# Sitemaps
+Sitemap: https://futureandhappiness.com/sitemap.xml
+Sitemap: https://futureandhappiness.com/sitemap-0.xml
