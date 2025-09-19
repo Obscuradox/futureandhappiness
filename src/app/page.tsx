@@ -364,19 +364,17 @@ export default function Home() {
                     href={href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex flex-col gap-5 rounded-3xl border border-[#e9dcf4] bg-[#fdfbff] p-8 md:p-9 shadow-md hover:shadow-xl transition-shadow min-h-[320px]"
+                    className="group flex flex-col items-center text-center gap-6 rounded-3xl border border-[#e9dcf4] bg-[#fdfbff] p-8 md:p-10 shadow-md hover:shadow-xl transition-shadow min-h-[380px]"
                   >
-                    <div className="flex items-center gap-3">
-                      <Image
-                        src={logo}
-                        alt={projectTitle}
-                        width={96}
-                        height={96}
-                        className="h-16 w-16 object-contain"
-                      />
-                      <h5 className="text-xl font-semibold text-[#311143]">{projectTitle}</h5>
-                    </div>
-                    <p className="text-base leading-relaxed text-[#513063]">
+                    <Image
+                      src={logo}
+                      alt={projectTitle}
+                      width={160}
+                      height={160}
+                      className="h-28 w-28 object-contain"
+                    />
+                    <h5 className="text-2xl font-semibold text-[#311143]">{projectTitle}</h5>
+                    <p className="text-base leading-relaxed text-[#513063] px-2">
                       {projectDescription}
                     </p>
                     <span className="text-sm font-semibold tracking-[0.18em] uppercase text-[#401344] group-hover:text-[#6c2f88] transition-colors">
