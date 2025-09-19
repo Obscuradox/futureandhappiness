@@ -8,9 +8,9 @@ import {
   IconBuilding,
   IconDeviceDesktop,
   IconAugmentedReality,
+  IconBrandLinkedin,
 } from "@tabler/icons-react";
 import ScrollExpandMedia from '@/components/blocks/scroll-expansion-hero';
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -321,7 +321,8 @@ export default function Home() {
               href="https://explore.unyted.world/scene?id=81d67d50-057a-11f0-bc79-02243b6f7d63"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden md:inline-flex items-center justify-center self-start rounded-full bg-[#401344] px-6 py-3 text-sm font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_25px_rgba(64,19,68,0.3)] transition-transform hover:-translate-y-1 hover:bg-[#552060]"
+              className="button-74 hidden md:inline-block"
+              style={{ letterSpacing: '0.2em', textTransform: 'uppercase' }}
             >
               Explore The Metaverse
             </a>
@@ -349,7 +350,8 @@ export default function Home() {
                 </h4>
                 <a
                   href="#contact"
-                  className="text-sm font-semibold uppercase tracking-[0.25em] text-[#401344] hover:text-[#6c2f88] transition-colors"
+                  className="button-74"
+                  style={{ textTransform: 'uppercase', letterSpacing: '0.25em', fontSize: '14px' }}
                 >
                   Start A Build →
                 </a>
@@ -415,6 +417,20 @@ export default function Home() {
                   <p>
                     Hatima's mission is clear: to help innovative projects be heard and seen, in the UAE and across the world. Through her work, she empowers founders to amplify their voices, attract investors, and bring life-changing technologies to market.
                   </p>
+                  <div>
+                    <a
+                      href="https://www.linkedin.com/in/tatyana-titova/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="button-74"
+                      aria-label="Connect with Hatima Singer on LinkedIn"
+                    >
+                      <span style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }}>
+                        <IconBrandLinkedin style={{ height: '20px', width: '20px' }} />
+                      </span>
+                      <span style={{ verticalAlign: 'middle' }}>Connect on LinkedIn</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>
@@ -439,6 +455,20 @@ export default function Home() {
                   <p>
                     Razzaq&apos;s ultimate goal is to bridge innovation with humanity: creating systems that help societies thrive, ensuring transparency, sustainability, and empowerment at every level. His life journey reflects his belief that technology is most powerful when it uplifts people and amplifies the good we are capable of achieving together.
                   </p>
+                  <div>
+                    <a
+                      href="https://www.linkedin.com/in/sam-singer/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="button-74"
+                      aria-label="Connect with Abdur Razzaq Singer on LinkedIn"
+                    >
+                      <span style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: '8px' }}>
+                        <IconBrandLinkedin style={{ height: '20px', width: '20px' }} />
+                      </span>
+                      <span style={{ verticalAlign: 'middle' }}>Connect on LinkedIn</span>
+                    </a>
+                  </div>
                 </div>
               </div>
               <div className="order-1 md:order-2 space-y-8">
@@ -796,9 +826,9 @@ const ContactFormSection = () => {
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-[#401344] hover:bg-[#501454] text-white">
+                <button type="submit" className="button-74 w-full justify-center md:w-auto" aria-label="Send email">
                   Send Email
-                </Button>
+                </button>
               </form>
             </div>
           </div>
